@@ -10,12 +10,13 @@
 + POW共识机制 -> Block
 + 交易过程 -> Transaction
 + 钱包基本功能 -> Wallet
++ 二叉树形式的简单Merkle Tree -> MerkleTree
 
 ## 3 demo使用方法
 Main类中包含现有功能的测试方法，包括：
 + mineTest 用于测试挖矿功能（POW）
 + transactionTest 用于测试交易功能
-+ Merkle Tree
++ genesisTest 完整的区块链测试
 
 ## 4 TODO
 + 网络通信功能
