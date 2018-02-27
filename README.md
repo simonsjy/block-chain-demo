@@ -15,9 +15,9 @@
 Main类中包含现有功能的测试方法，包括：
 + mineTest 用于测试挖矿功能（POW）
 + transactionTest 用于测试交易功能
++ Merkle Tree
 
 ## 4 TODO
-+ Merkle Tree
 + 网络通信功能
 + 钱包更丰富的功能
 
