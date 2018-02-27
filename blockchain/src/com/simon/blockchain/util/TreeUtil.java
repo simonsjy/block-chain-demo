@@ -3,6 +3,7 @@ package com.simon.blockchain.util;
 import com.simon.blockchain.transaction.Transaction;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by simon on 2018/2/20.
@@ -14,7 +15,8 @@ public class TreeUtil {
      * @param transactions
      * @return
      */
-    public static String getMerkleRoot(ArrayList<Transaction> transactions){
-        return null;
+    public static String getMerkleRoot(List<Transaction> transactions){
+        MerkleTree merkleTree = new MerkleTree(transactions);
+        return merkleTree.buildTree();
     }
 }

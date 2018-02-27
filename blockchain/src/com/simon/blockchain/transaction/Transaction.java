@@ -17,7 +17,7 @@ public class Transaction {
     public String transactionId;
 
     public PublicKey sender;
-    public PublicKey reciepient;
+    public PublicKey recipient;
 
     public float value;
     //数字签名保证两点：1.只有数字货币的拥有者才能使用。2.在交易被矿工挖出之前（共识前）交易不会被篡改。
@@ -31,29 +31,20 @@ public class Transaction {
 
     public Transaction(PublicKey from, PublicKey to, float value, List<TransactionInput> inputs) {
         this.sender = from;
-        this.reciepient = to;
+        this.recipient = to;
         this.value = value;
         this.inputs = inputs;
     }
 
-    private String calculateHash() {
-        sequence++;
-        return CryptologyUtil.applySha256(
-                CryptologyUtil.getStringFromKey(sender) +
-                        CryptologyUtil.getStringFromKey(reciepient) +
-                        Float.toString(value) + sequence
-        );
-    }
-
     public void generateSignature(PrivateKey privateKey) {
         //这里只对交易双方和value进行了签名，可以签名更多信息
-        String data = CryptologyUtil.getStringFromKey(sender) + CryptologyUtil.getStringFromKey(reciepient) +
+        String data = CryptologyUtil.getStringFromKey(sender) + CryptologyUtil.getStringFromKey(recipient) +
                 Float.toString(value);
         signature = CryptologyUtil.applyECDSASig(privateKey, data);
     }
 
     public boolean verifySignature() {
-        String data = CryptologyUtil.getStringFromKey(sender) + CryptologyUtil.getStringFromKey(reciepient) +
+        String data = CryptologyUtil.getStringFromKey(sender) + CryptologyUtil.getStringFromKey(recipient) +
                 Float.toString(value);
         return CryptologyUtil.verifyECDSASig(sender,data,signature);
     }
@@ -81,11 +72,9 @@ public class Transaction {
             System.out.println("sum of Inputs is smaller than value, sum:" + getInputValue()+",value:"+value);
             return false;
         }
-        outputs.add(new TransactionOutput(this.reciepient,value,transactionId));
+
+        outputs.add(new TransactionOutput(this.recipient,value,transactionId));
         outputs.add(new TransactionOutput(this.sender,leftOver,transactionId));
-
-
-        //这里面显然没有事务的概念，如何保证原子性？
 
         //将所有output加入到hashmap
         for(TransactionOutput output:outputs){
@@ -102,7 +91,7 @@ public class Transaction {
         return true;
     }
 
-    private float getInputValue(){
+    public float getInputValue(){
         float total = 0;
         for(TransactionInput input:inputs ){
             if(input.UTXO == null){
@@ -113,11 +102,20 @@ public class Transaction {
         return total;
     }
 
-    private float getOutputValue(){
+    public float getOutputValue(){
         float total = 0;
         for(TransactionOutput output: outputs){
             total += output.value;
         }
         return total;
+    }
+
+    private String calculateHash() {
+        sequence++;
+        return CryptologyUtil.applySha256(
+                CryptologyUtil.getStringFromKey(sender) +
+                        CryptologyUtil.getStringFromKey(recipient) +
+                        Float.toString(value) + sequence
+        );
     }
 }

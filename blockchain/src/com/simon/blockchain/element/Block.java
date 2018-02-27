@@ -2,6 +2,7 @@ package com.simon.blockchain.element;
 
 import com.simon.blockchain.transaction.Transaction;
 import com.simon.blockchain.util.CryptologyUtil;
+import com.simon.blockchain.util.TreeUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class Block {
     //随机数，使得hash的前difficulty位是0
     private int nonce;
 
-    //block的简单例子
+    //block初始化的简单例子
     public Block(String data, String previousHash) {
         this.data = data;
         this.previousHash = previousHash;
@@ -35,6 +36,7 @@ public class Block {
         this.hash = calculateHash();
     }
 
+    //block实际使用的构造函数
     public Block(String previousHash){
         this.previousHash = previousHash;
         this.timeStamp = new Date().getTime();
@@ -56,6 +58,7 @@ public class Block {
      * @param difficulty
      */
     public void mineBlock(int difficulty){
+        merkleRoot = TreeUtil.getMerkleRoot(transactions);
         String target = new String(new char[difficulty]).replace('\0','0');
         while (!hash.substring(0,difficulty).equals(target)){
             //可以用random值作为nonce进行尝试
@@ -69,7 +72,7 @@ public class Block {
         if(Objects.isNull(transaction)){
             return false;
         }
-        if((previousHash != "0" )){
+        if(!Objects.equals(previousHash,"0")){
             if(!transaction.processTransaction()) {
                 System.out.println("Transaction failed to process.");
                 return false;
